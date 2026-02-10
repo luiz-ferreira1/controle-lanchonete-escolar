@@ -58,7 +58,18 @@ def cadastrar_produto():
     preco = float(input("Preço: "))
     quantidade = int(input("Quantidade em estoque: "))
     
+    # Cria o produto
     produto = Produto(novo_codigo, nome, preco, quantidade)
+    
+    # Usa os métodos de validação da classe Produto
+    if not produto.validar_preco():
+        print('O preço deve ser positivo')
+        return
+    
+    if not produto.validar_estoque():
+        print('A quantidade em estoque deve ser positiva')
+        return
+    
     produtos.append(produto)
     
     repositorio_produtos.salvar_produtos(produtos)
@@ -96,13 +107,13 @@ def registrar_venda():
         print("Produto não encontrado!")
         return
     
-    # verifica estoque
-    if produto_encontrado.quantidade_estoque < quantidade:
+    # Usa o método da classe Produto para verificar estoque
+    if not produto_encontrado.tem_estoque_suficiente(quantidade):
         print("Estoque insuficiente!")
         return
     
-    # atualiza estoque
-    produto_encontrado.quantidade_estoque = produto_encontrado.quantidade_estoque - quantidade
+    # Usa o método da classe Produto para diminuir estoque
+    produto_encontrado.diminuir_estoque(quantidade)
     
     # gera id da venda
     if len(vendas) > 0:
@@ -122,7 +133,8 @@ def registrar_venda():
     repositorio_produtos.salvar_produtos(produtos)
     repositorio_vendas.salvar_vendas(vendas)
     
-    total = produto_encontrado.preco * quantidade
+    # Usa o método da classe Venda para calcular o total
+    total = venda.calcular_total()
     print(f"Venda registrada! Total: R$ {total}")
 
 
